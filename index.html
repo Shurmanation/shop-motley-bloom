@@ -477,51 +477,55 @@
       .products {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
       }
+      
+      /* Show fixed cart on tablets and below */
+      .fixed-cart {
+        display: none; /* Still hidden on tablets */
+      }
     }
     
     @media screen and (max-width: 480px) {
       .site-header {
-        flex-wrap: wrap;
-        padding: 10px;
-        justify-content: space-between;
-        row-gap: 10px;
+        flex-wrap: nowrap;
+        padding: 10px 15px;
+        justify-content: flex-start;
+        align-items: center;
       }
       
       .logo {
-        order: 1;
-        margin: 0 auto;
-        width: 100%;
-        justify-content: center;
-        padding: 5px 0;
+        order: 0;
+        margin: 0;
+        width: auto;
+        margin-left: 15px;
       }
       
       .logo img {
-        height: 30px; /* Smaller logo on mobile */
+        height: 28px; /* Smaller logo on mobile */
         max-width: 100%;
       }
       
       .mobile-menu-button {
         display: block;
         order: 0;
+        font-size: 20px;
+        padding: 5px;
       }
       
       .header-actions {
-        order: 2;
-        gap: 15px;
-      }
-      
-      .search-button, .login-button, .cart-button {
-        font-size: 12px; /* Smaller text for buttons */
+        display: none; /* Hide regular header actions */
       }
       
       .nav {
         display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
         width: 100%;
-        order: 3;
         flex-direction: column;
         gap: 0;
-        margin-top: 10px;
-        border-top: 1px solid var(--mb-light-gray);
+        background-color: white;
+        z-index: 100;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.1);
       }
       
       .nav.active {
@@ -529,8 +533,17 @@
       }
       
       .nav a {
-        padding: 10px 0;
+        padding: 12px 15px;
         border-bottom: 1px solid var(--mb-light-gray);
+      }
+      
+      .nav-login {
+        padding: 12px 15px;
+        border-bottom: 1px solid var(--mb-light-gray);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
       }
       
       .hero-content {
@@ -581,20 +594,21 @@
       .pagination-info {
         font-size: 12px;
       }
+      
+      /* Show fixed cart on mobile */
+      .fixed-cart {
+        display: block;
+      }
     }
     
     /* Smaller phones */
     @media screen and (max-width: 360px) {
       .site-header {
-        padding: 8px;
+        padding: 8px 10px;
       }
       
       .logo img {
-        height: 25px; /* Even smaller logo on very small screens */
-      }
-      
-      .header-actions {
-        gap: 10px;
+        height: 24px; /* Even smaller logo on very small screens */
       }
       
       .hero {
@@ -606,6 +620,24 @@
         font-size: 12px;
       }
     }
+
+    /* Add fixed cart icon styles */
+    .fixed-cart {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      background-color: var(--mb-accent);
+      border-radius: 50%;
+      color: white;
+      text-align: center;
+      line-height: 50px;
+      font-size: 20px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
   </style>
 </head>
 <body>
@@ -616,22 +648,24 @@
   <div class="site-header">
     <button class="mobile-menu-button" aria-label="Toggle navigation menu">☰</button>
     
+    <a href="#" class="logo">
+      <img src="MB_HorizontalLogo_Black.avif" alt="Motley Bloom Logo">
+    </a>
+    
     <div class="nav">
+      <div class="nav-login">Log in</div>
       <a href="#">Our Perspective</a>
       <a href="#">Articles</a>
       <a href="#">Shop</a>
     </div>
     
-    <a href="#" class="logo">
-      <img src="MB_HorizontalLogo_Black.avif" alt="Motley Bloom Logo">
-    </a>
-    
     <div class="header-actions">
-      <button class="search-button">Search</button>
-      <button class="login-button">Log in</button>
       <button class="cart-button">Cart</button>
     </div>
   </div>
+  
+  <!-- Fixed cart icon for mobile -->
+  <div class="fixed-cart">🛒</div>
   
   <!-- Hero section -->
   <div class="hero">
@@ -1125,6 +1159,30 @@
         });
       }
       
+      // Handle login button click in nav
+      const navLogin = document.querySelector('.nav-login');
+      if (navLogin) {
+        navLogin.addEventListener('click', () => {
+          alert('Login functionality would go here');
+        });
+      }
+      
+      // Handle cart icon click
+      const cartButton = document.querySelector('.cart-button');
+      const fixedCart = document.querySelector('.fixed-cart');
+      
+      if (cartButton) {
+        cartButton.addEventListener('click', () => {
+          alert('Shopping cart would open here');
+        });
+      }
+      
+      if (fixedCart) {
+        fixedCart.addEventListener('click', () => {
+          alert('Shopping cart would open here');
+        });
+      }
+      
       // Sidebar toggle for mobile
       const sidebarToggle = document.querySelector('.sidebar-toggle');
       const sidebarSections = document.querySelectorAll('.sidebar-section');
@@ -1137,6 +1195,15 @@
           });
         });
       }
+      
+      // Close mobile menu when clicking outside
+      document.addEventListener('click', (event) => {
+        if (navMenu.classList.contains('active') && 
+            !event.target.matches('.mobile-menu-button') && 
+            !event.target.closest('.nav')) {
+          navMenu.classList.remove('active');
+        }
+      });
       
       // Handle touch events for mobile
       if ('ontouchstart' in window) {
