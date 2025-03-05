@@ -41,6 +41,7 @@
       color: var(--mb-text);
       font-family: var(--mb-body-font);
       margin: 0;
+      position: relative; /* To properly position the cart icon */
     }
 
     .site-header {
@@ -50,6 +51,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: relative; /* For dropdown positioning */
     }
 
     .logo {
@@ -83,13 +85,56 @@
       color: var(--mb-accent);
     }
 
+    /* Mobile navigation styles */
+    .mobile-nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      flex-direction: column;
+      gap: 0;
+      background-color: white;
+      z-index: 100;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+    
+    .mobile-nav.active {
+      display: flex;
+    }
+    
+    .mobile-nav a {
+      padding: 12px 15px;
+      border-bottom: 1px solid var(--mb-light-gray);
+      color: var(--mb-text);
+      text-decoration: none;
+      font-family: var(--mb-body-font);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 14px;
+    }
+    
+    .mobile-nav a:hover {
+      color: var(--mb-accent);
+    }
+    
+    .nav-login {
+      padding: 12px 15px;
+      border-bottom: 1px solid var(--mb-light-gray);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
     .header-actions {
       display: flex;
       gap: 20px;
       align-items: center;
     }
     
-    .search-button, .login-button, .cart-button {
+    .cart-button {
       background: none;
       border: none;
       cursor: pointer;
@@ -98,7 +143,7 @@
       font-size: 14px;
     }
     
-    .search-button:hover, .login-button:hover, .cart-button:hover {
+    .cart-button:hover {
       color: var(--mb-accent);
     }
 
@@ -447,6 +492,7 @@
     @media screen and (max-width: 768px) {
       .site-header {
         padding: 15px;
+        justify-content: space-between;
       }
       
       .nav {
@@ -480,7 +526,7 @@
       
       /* Show fixed cart on tablets and below */
       .fixed-cart {
-        display: none; /* Still hidden on tablets */
+        display: block;
       }
     }
     
@@ -488,15 +534,15 @@
       .site-header {
         flex-wrap: nowrap;
         padding: 10px 15px;
-        justify-content: flex-start;
+        justify-content: space-between;
         align-items: center;
       }
       
       .logo {
-        order: 0;
+        order: 2;
         margin: 0;
         width: auto;
-        margin-left: 15px;
+        justify-content: center;
       }
       
       .logo img {
@@ -506,9 +552,10 @@
       
       .mobile-menu-button {
         display: block;
-        order: 0;
+        order: 1;
         font-size: 20px;
         padding: 5px;
+        z-index: 101; /* Above the dropdown */
       }
       
       .header-actions {
@@ -516,34 +563,7 @@
       }
       
       .nav {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        flex-direction: column;
-        gap: 0;
-        background-color: white;
-        z-index: 100;
-        box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-      }
-      
-      .nav.active {
-        display: flex;
-      }
-      
-      .nav a {
-        padding: 12px 15px;
-        border-bottom: 1px solid var(--mb-light-gray);
-      }
-      
-      .nav-login {
-        padding: 12px 15px;
-        border-bottom: 1px solid var(--mb-light-gray);
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        cursor: pointer;
+        display: none; /* Hide desktop nav on mobile */
       }
       
       .hero-content {
@@ -634,9 +654,10 @@
       color: white;
       text-align: center;
       line-height: 50px;
-      font-size: 20px;
+      font-size: 24px;
       box-shadow: 0 3px 8px rgba(0,0,0,0.2);
       z-index: 1000;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -646,21 +667,28 @@
   </div>
   
   <div class="site-header">
+    <div class="nav">
+      <a href="#">Our Perspective</a>
+      <a href="#">Articles</a>
+      <a href="#">Shop</a>
+    </div>
+    
     <button class="mobile-menu-button" aria-label="Toggle navigation menu">☰</button>
     
     <a href="#" class="logo">
       <img src="MB_HorizontalLogo_Black.avif" alt="Motley Bloom Logo">
     </a>
     
-    <div class="nav">
+    <div class="header-actions">
+      <button class="cart-button">Cart</button>
+    </div>
+    
+    <!-- Mobile Navigation Dropdown -->
+    <div class="mobile-nav">
       <div class="nav-login">Log in</div>
       <a href="#">Our Perspective</a>
       <a href="#">Articles</a>
       <a href="#">Shop</a>
-    </div>
-    
-    <div class="header-actions">
-      <button class="cart-button">Cart</button>
     </div>
   </div>
   
@@ -1151,11 +1179,11 @@
       
       // Mobile menu toggle
       const mobileMenuButton = document.querySelector('.mobile-menu-button');
-      const navMenu = document.querySelector('.nav');
+      const mobileNav = document.querySelector('.mobile-nav');
       
-      if (mobileMenuButton) {
+      if (mobileMenuButton && mobileNav) {
         mobileMenuButton.addEventListener('click', () => {
-          navMenu.classList.toggle('active');
+          mobileNav.classList.toggle('active');
         });
       }
       
@@ -1198,10 +1226,10 @@
       
       // Close mobile menu when clicking outside
       document.addEventListener('click', (event) => {
-        if (navMenu.classList.contains('active') && 
+        if (mobileNav && mobileNav.classList.contains('active') && 
             !event.target.matches('.mobile-menu-button') && 
-            !event.target.closest('.nav')) {
-          navMenu.classList.remove('active');
+            !event.target.closest('.mobile-nav')) {
+          mobileNav.classList.remove('active');
         }
       });
       
