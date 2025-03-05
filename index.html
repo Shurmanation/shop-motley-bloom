@@ -453,6 +453,10 @@
         gap: 15px;
       }
       
+      .logo img {
+        height: 35px; /* Slightly smaller logo on tablets */
+      }
+      
       .hero-content {
         left: 20px;
         max-width: 80%;
@@ -479,16 +483,35 @@
       .site-header {
         flex-wrap: wrap;
         padding: 10px;
+        justify-content: space-between;
+        row-gap: 10px;
       }
       
       .logo {
         order: 1;
         margin: 0 auto;
+        width: 100%;
+        justify-content: center;
+        padding: 5px 0;
+      }
+      
+      .logo img {
+        height: 30px; /* Smaller logo on mobile */
+        max-width: 100%;
       }
       
       .mobile-menu-button {
         display: block;
         order: 0;
+      }
+      
+      .header-actions {
+        order: 2;
+        gap: 15px;
+      }
+      
+      .search-button, .login-button, .cart-button {
+        font-size: 12px; /* Smaller text for buttons */
       }
       
       .nav {
@@ -498,6 +521,7 @@
         flex-direction: column;
         gap: 0;
         margin-top: 10px;
+        border-top: 1px solid var(--mb-light-gray);
       }
       
       .nav.active {
@@ -509,15 +533,19 @@
         border-bottom: 1px solid var(--mb-light-gray);
       }
       
-      .header-actions {
-        order: 2;
-      }
-      
       .hero-content {
         bottom: 20px;
         left: 15px;
         padding: 15px;
         max-width: 85%;
+      }
+      
+      .hero-content h1 {
+        font-size: 24px;
+      }
+      
+      .hero-content p {
+        font-size: 14px;
       }
       
       .sidebar-toggle {
@@ -544,6 +572,38 @@
       
       .product-image-placeholder {
         height: 130px;
+      }
+      
+      .pagination {
+        gap: 10px;
+      }
+      
+      .pagination-info {
+        font-size: 12px;
+      }
+    }
+    
+    /* Smaller phones */
+    @media screen and (max-width: 360px) {
+      .site-header {
+        padding: 8px;
+      }
+      
+      .logo img {
+        height: 25px; /* Even smaller logo on very small screens */
+      }
+      
+      .header-actions {
+        gap: 10px;
+      }
+      
+      .hero {
+        height: 400px;
+      }
+      
+      .product-count {
+        margin: 10px;
+        font-size: 12px;
       }
     }
   </style>
