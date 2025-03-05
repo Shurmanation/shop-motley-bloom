@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Motley Bloom Shop</title>
+  <style>
+    /* Custom Font Declarations */
+    @font-face {
+      font-family: 'Modern Era';
+      src: url('Modern_Era_Medium.woff') format('woff');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+    
+    @font-face {
+      font-family: 'Feature Display';
+      src: url('Feature_Display_Light.woff') format('woff');
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+    
+    :root {
+      --mb-yellow: #c4a02a;
+      --mb-background: #faf9f8;
+      --mb-text: #1d1e20;
+      --mb-accent: hsl(259.38, 100%, 68.43%);
+      --mb-border: #3f5260;
+      --mb-light-gray: #e9e9eb;
+      --mb-warm-bg: rgb(234, 216, 199);
+      
+      /* Font variables */
+      --mb-body-font: 'Modern Era', sans-serif;
+      --mb-display-font: 'Feature Display', serif;
+    }
+    
+    body {
+      background-color: var(--mb-background);
+      color: var(--mb-text);
+      font-family: var(--mb-body-font);
+      margin: 0;
+    }
+
+    .site-header {
+      background-color: white;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--mb-light-gray);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .logo img {
+      height: 40px;
+      width: auto;
+    }
+
+    .nav {
+      display: flex;
+      gap: 30px;
+    }
+    
+    .nav a {
+      color: var(--mb-text);
+      text-decoration: none;
+      font-family: var(--mb-body-font);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    
+    .nav a:hover {
+      color: var(--mb-accent);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    
+    .search-button, .login-button, .cart-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--mb-text);
+      font-family: var(--mb-body-font);
+      font-size: 14px;
+    }
+    
+    .search-button:hover, .login-button:hover, .cart-button:hover {
+      color: var(--mb-accent);
+    }
+
+    /* Hero section */
+    .hero {
+      position: relative;
+      height: 500px;
+      overflow: hidden;
+    }
+    
+    .hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 10%; /* Lowered to show more of the top */
+    }
+    
+    .hero-content {
+      position: absolute;
+      bottom: 40px;
+      left: 40px;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 20px 30px;
+      max-width: 500px;
+    }
+    
+    .hero-content h1 {
+      margin: 0 0 10px 0;
+      font-size: 32px;
+      color: var(--mb-text);
+    }
+    
+    .hero-content p {
+      margin: 0;
+      font-size: 16px;
+      color: var(--mb-text);
+    }
+
+    .page {
+      display: grid;
+      grid-template-areas:
+        "sidebar main";
+      grid-template-columns: 200px 1fr;
+      background-color: var(--mb-warm-bg);
+    }
+
+    .sidebar {
+      grid-area: sidebar;
+      padding: 20px;
+      background-color: var(--mb-warm-bg);
+      border-right: 1px solid var(--mb-light-gray);
+    }
+    
+    .sidebar-section {
+      margin-bottom: 30px;
+    }
+    
+    .sidebar-title {
+      margin-bottom: 15px;
+      font-family: var(--mb-display-font);
+      font-size: 18px;
+      color: var(--mb-text);
+    }
+
+    /* Search bar */
+    .search-container {
+      margin-bottom: 20px;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--mb-border);
+      font-family: var(--mb-body-font);
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    
+    .search-input:focus {
+      outline: 2px solid var(--mb-accent);
+      border-color: var(--mb-accent);
+    }
+
+    /* Checkbox styles */
+    .product-type-checkboxes {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+    
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      padding: 3px 0;
+    }
+    
+    .checkbox-container input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+    
+    .checkmark {
+      position: relative;
+      height: 18px;
+      width: 18px;
+      background-color: white;
+      border: 1px solid var(--mb-border);
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+    
+    .checkbox-container:hover .checkmark {
+      background-color: hsla(259.38, 100%, 68.43%, 0.1);
+    }
+    
+    .checkbox-container input:checked ~ .checkmark {
+      background-color: var(--mb-accent);
+      border-color: var(--mb-accent);
+    }
+    
+    .checkmark:after {
+      content: "";
+      position: absolute;
+      display: none;
+    }
+    
+    .checkbox-container input:checked ~ .checkmark:after {
+      display: block;
+    }
+    
+    .checkbox-container .checkmark:after {
+      left: 6px;
+      top: 2px;
+      width: 4px;
+      height: 9px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+    
+    .checkbox-label {
+      font-size: 14px;
+    }
+
+    .main {
+      grid-area: main;
+      background-color: var(--mb-warm-bg);
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .product {
+      background-color: #ffffff;
+      padding: 20px;
+      border: 1px solid var(--mb-light-gray);
+      text-align: center;
+      font-family: var(--mb-body-font);
+      transition: all 0.2s;
+    }
+    
+    .product-image-placeholder {
+      width: 100%;
+      height: 180px;
+      background-color: var(--mb-light-gray);
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #999;
+      font-size: 14px;
+    }
+
+    .product:hover {
+      border-color: var(--mb-accent);
+    }
+
+    .hidden {
+      display: none;
+    }
+    
+    .banner {
+      background-color: var(--mb-yellow);
+      color: white;
+      text-align: center;
+      padding: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: var(--mb-body-font);
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--mb-display-font);
+      font-weight: 300;
+    }
+    
+    .trait-dropdown {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+    
+    .trait-dropdown-button {
+      width: 100%;
+      padding: 10px;
+      background-color: white;
+      border: 1px solid var(--mb-border);
+      text-align: left;
+      font-family: var(--mb-body-font);
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .trait-dropdown-button:after {
+      content: '';
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 5px solid var(--mb-text);
+    }
+    
+    .trait-dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: white;
+      width: 100%;
+      border: 1px solid var(--mb-border);
+      border-top: none;
+      z-index: 1;
+    }
+    
+    .trait-dropdown-content button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      text-align: left;
+      background: none;
+      border: none;
+      border-bottom: 1px solid var(--mb-light-gray);
+      font-family: var(--mb-body-font);
+      cursor: pointer;
+    }
+    
+    .trait-dropdown-content button:hover {
+      background-color: hsla(259.38, 100%, 68.43%, 0.1);
+    }
+    
+    .trait-dropdown-content button.active {
+      background-color: var(--mb-accent);
+      color: white;
+    }
+    
+    .show {
+      display: block;
+    }
+    
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px 0;
+      gap: 15px;
+    }
+    
+    .pagination-button {
+      background-color: white;
+      border: 1px solid var(--mb-border);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .pagination-button:hover {
+      background-color: hsla(259.38, 100%, 68.43%, 0.1);
+    }
+    
+    .pagination-button.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .pagination-info {
+      font-size: 14px;
+    }
+    
+    .product-count {
+      margin: 20px;
+      font-size: 14px;
+      color: var(--mb-text);
+    }
+  </style>
+</head>
+<body>
+  <div class="banner">
+    Subscribe to Motley Bloom Magazine Today!
+  </div>
+  
+  <div class="site-header">
+    <div class="nav">
+      <a href="#">Our Perspective</a>
+      <a href="#">Articles</a>
+      <a href="#">Shop</a>
+    </div>
+    
+    <a href="#" class="logo">
+      <img src="MB_HorizontalLogo_Black.avif" alt="Motley Bloom Logo">
+    </a>
+    
+    <div class="header-actions">
+      <button class="search-button">Search</button>
+      <button class="login-button">Log in</button>
+      <button class="cart-button">Cart</button>
+    </div>
+  </div>
+  
+  <!-- Hero section -->
+  <div class="hero">
+    <img src="Girl_Playing_Guitar_with_Friends_2.webp" alt="Girl playing guitar with friends">
+    <div class="hero-content">
+      <h1>Express Your Authentic Self</h1>
+      <p>Discover products designed with neurodivergent traits in mind, helping you thrive in everyday life.</p>
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-title">Search Products</div>
+        <div class="search-container">
+          <input type="text" class="search-input" placeholder="Search products..." aria-label="Search products">
+        </div>
+      </div>
+      
+      <div class="sidebar-section">
+        <div class="sidebar-title">Shop by Trait</div>
+        <div class="trait-dropdown">
+          <button class="trait-dropdown-button">All Traits</button>
+          <div class="trait-dropdown-content" id="trait-dropdown">
+            <button data-trait="">All traits</button>
+            <button data-trait="sensory">Sensory</button>
+            <button data-trait="organizational">Organizational</button>
+            <button data-trait="regulation">Regulation</button>
+            <button data-trait="stimming">Stimming</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="sidebar-section">
+        <div class="sidebar-title">Product Type</div>
+        <div class="product-type-checkboxes">
+          <label class="checkbox-container">
+            <input type="checkbox" data-product="mens-clothing">
+            <span class="checkmark"></span>
+            <span class="checkbox-label">Mens Clothing</span>
+          </label>
+          <label class="checkbox-container">
+            <input type="checkbox" data-product="womens-clothing">
+            <span class="checkmark"></span>
+            <span class="checkbox-label">Womens Clothing</span>
+          </label>
+          <label class="checkbox-container">
+            <input type="checkbox" data-product="hoodies">
+            <span class="checkmark"></span>
+            <span class="checkbox-label">Hoodies</span>
+          </label>
+          <label class="checkbox-container">
+            <input type="checkbox" data-product="cuddlers">
+            <span class="checkmark"></span>
+            <span class="checkbox-label">Cuddlers</span>
+          </label>
+          <label class="checkbox-container">
+            <input type="checkbox" data-product="home-decor">
+            <span class="checkmark"></span>
+            <span class="checkbox-label">Home Decor</span>
+          </label>
+          <label class="checkbox-container">
+            <input type="checkbox" data-product="weighted-items">
+            <span class="checkmark"></span>
+            <span class="checkbox-label">Weighted Items</span>
+          </label>
+          <label class="checkbox-container">
+            <input type="checkbox" data-product="books-journals">
+            <span class="checkmark"></span>
+            <span class="checkbox-label">Books & Journals</span>
+          </label>
+          <label class="checkbox-container">
+            <input type="checkbox" data-product="technology">
+            <span class="checkmark"></span>
+            <span class="checkbox-label">Technology</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="product-count"></div>
+      <div class="products"></div>
+      <div class="pagination">
+        <button class="pagination-button prev-page" aria-label="Previous page">←</button>
+        <div class="pagination-info">Page <span class="current-page">1</span> of <span class="total-pages">1</span></div>
+        <button class="pagination-button next-page" aria-label="Next page">→</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // All product types including new ones
+      const productTypes = [
+        'mens-clothing', 'womens-clothing', 'hoodies', 'cuddlers', 'home-decor',
+        'weighted-items', 'books-journals', 'technology'
+      ];
+      
+      const traits = ['sensory', 'organizational', 'regulation', 'stimming'];
+      
+      // Product name mapping based on traits and types
+      const productNames = {
+        'sensory': {
+          'mens-clothing': [
+            "Sensory-Friendly Men's T-Shirt", 
+            "Seamless Men's Polo", 
+            "Tag-Free Men's Button Down", 
+            "Compression Men's Undershirt", 
+            "Soft-Texture Men's Pants"
+          ],
+          'womens-clothing': [
+            "Sensory-Friendly Women's Blouse", 
+            "Seamless Women's Top", 
+            "Tag-Free Women's Dress", 
+            "Compression Women's Leggings", 
+            "Soft-Texture Women's Skirt"
+          ],
+          'hoodies': [
+            "Sensory-Friendly Zip Hoodie", 
+            "Weighted Hood Pullover", 
+            "Noise-Reducing Hoodie", 
+            "Ultra-Soft Texture Hoodie", 
+            "Pressure Relief Hoodie"
+          ],
+          'cuddlers': [
+            "Sensory Seeking Pillow", 
+            "Textured Hugging Cushion", 
+            "Vibrating Comfort Cuddler", 
+            "Sound-Absorbing Plush", 
+            "Multi-Texture Relaxation Cuddler"
+          ],
+          'home-decor': [
+            "Sound-Dampening Wall Panels", 
+            "Adjustable Lighting Fixture", 
+            "Textured Throw Pillows", 
+            "Glare-Reducing Window Film", 
+            "Aromatherapy Diffuser Lamp"
+          ]
+        },
+        'organizational': {
+          'mens-clothing': [
+            "Multi-Pocket Men's Vest", 
+            "Color-Coded Men's Socks", 
+            "Quick-Sort Men's Underwear", 
+            "Visual Schedule Men's Shirt", 
+            "Label-Ready Men's Pants"
+          ],
+          'womens-clothing': [
+            "Multi-Pocket Women's Cardigan", 
+            "Color-Coded Women's Socks", 
+            "Quick-Sort Women's Underwear", 
+            "Visual Schedule Women's Shirt", 
+            "Label-Ready Women's Pants"
+          ],
+          'hoodies': [
+            "Storage Solution Hoodie", 
+            "Reminder Cue Pullover", 
+            "Time Management Hood", 
+            "Task-Tracking Zip Hoodie", 
+            "Color-Coded Pocket Hoodie"
+          ],
+          'cuddlers': [
+            "Daily Routine Reminder Plush", 
+            "Task-Tracking Cushion", 
+            "Sequential Step Buddy", 
+            "Visual Schedule Cuddler", 
+            "Time Management Plush Pal"
+          ],
+          'home-decor': [
+            "Visual Schedule Wall Calendar", 
+            "Color-Coded Storage System", 
+            "Time Management Clock", 
+            "Task-Tracking Board", 
+            "Routine Reminder System"
+          ]
+        },
+        'regulation': {
+          'mens-clothing': [
+            "Deep Pressure Men's Vest", 
+            "Temperature Regulating Men's Shirt", 
+            "Calming Compression Men's Base Layer", 
+            "Anxiety-Reducing Men's Jacket", 
+            "Stress-Relief Men's Pants"
+          ],
+          'womens-clothing': [
+            "Deep Pressure Women's Vest", 
+            "Temperature Regulating Women's Top", 
+            "Calming Compression Women's Base Layer", 
+            "Anxiety-Reducing Women's Cardigan", 
+            "Stress-Relief Women's Yoga Pants"
+          ],
+          'hoodies': [
+            "Calming Weighted Hoodie", 
+            "Emotion Regulation Pullover", 
+            "Stress-Relief Zip-Up", 
+            "Pressure Therapy Hood", 
+            "Anxiety-Reducing Sweatshirt"
+          ],
+          'cuddlers': [
+            "Emotional Regulation Buddy", 
+            "Calming Pressure Pillow", 
+            "Anxiety Relief Plush", 
+            "Self-Soothing Companion", 
+            "Stress-Relief Hugging Cushion"
+          ],
+          'home-decor': [
+            "Calming Water Feature", 
+            "Sensory Regulation Light Panel", 
+            "Anxiety-Reducing Weighted Blanket", 
+            "Stress-Relief Aromatherapy Diffuser", 
+            "Emotion Tracking Wall Display"
+          ]
+        },
+        'stimming': {
+          'mens-clothing': [
+            "Textured Pocket Men's Shirt", 
+            "Fidget Button Men's Jacket", 
+            "Chewable Collar Men's Top", 
+            "Spinning Cuff Men's Shirt", 
+            "Tactile Seam Men's Pants"
+          ],
+          'womens-clothing': [
+            "Textured Pocket Women's Cardigan", 
+            "Fidget Button Women's Blouse", 
+            "Chewable Pendant Women's Top", 
+            "Spinning Bracelet Women's Sleeve", 
+            "Tactile Seam Women's Leggings"
+          ],
+          'hoodies': [
+            "Fidget Feature Hoodie", 
+            "Chewable String Pullover", 
+            "Textured Panel Zip-Up", 
+            "Spinning Toggle Hoodie", 
+            "Tactile Pocket Sweatshirt"
+          ],
+          'cuddlers': [
+            "Fidget Feature Cushion", 
+            "Stimming Support Buddy", 
+            "Textured Exploration Plush", 
+            "Tactile Sensation Pillow", 
+            "Movement Feedback Cuddler"
+          ],
+          'home-decor': [
+            "Fidget Wall Panel", 
+            "Textured Exploration Frame", 
+            "Stimming Support Lamp", 
+            "Moving Parts Clock", 
+            "Tactile Sensation Rug"
+          ]
+        }
+      };
+      
+      // Generate all products
+      const allProducts = [];
+      let productId = 1;
+      
+      // Generate regular products with meaningful names
+      for (let trait of traits) {
+        for (let productType of productTypes.slice(0, 5)) { // Original product types
+          const namesForCategory = productNames[trait][productType];
+          for (let i = 0; i < 5; i++) {
+            allProducts.push({
+              id: productId++,
+              name: namesForCategory[i],
+              trait: trait,
+              productType: productType
+            });
+          }
+        }
+      }
+      
+      // Add special products for new categories
+      // Weighted Items
+      allProducts.push(
+        { id: productId++, name: "Weighted Blanket", trait: "regulation", productType: "weighted-items" },
+        { id: productId++, name: "Weighted Lap Pad", trait: "regulation", productType: "weighted-items" },
+        { id: productId++, name: "Weighted Shoulder Wrap", trait: "regulation", productType: "weighted-items" },
+        { id: productId++, name: "Weighted Vest", trait: "regulation", productType: "weighted-items" },
+        { id: productId++, name: "Weighted Stuffed Animal", trait: "regulation", productType: "weighted-items" },
+        { id: productId++, name: "Weighted Eye Mask", trait: "sensory", productType: "weighted-items" },
+        { id: productId++, name: "Weighted Neck Pillow", trait: "regulation", productType: "weighted-items" },
+        { id: productId++, name: "Weighted Wrist Band", trait: "stimming", productType: "weighted-items" }
+      );
+      
+      // Books & Journals
+      allProducts.push(
+        { id: productId++, name: "Executive Function Journal", trait: "organizational", productType: "books-journals" },
+        { id: productId++, name: "Sensory Exploration Guide", trait: "sensory", productType: "books-journals" },
+        { id: productId++, name: "Neurodivergent Living Book", trait: "organizational", productType: "books-journals" },
+        { id: productId++, name: "Visual Calendar System", trait: "organizational", productType: "books-journals" },
+        { id: productId++, name: "Emotional Regulation Workbook", trait: "regulation", productType: "books-journals" },
+        { id: productId++, name: "Stimming Journal", trait: "stimming", productType: "books-journals" },
+        { id: productId++, name: "Sensory-Friendly Planner", trait: "organizational", productType: "books-journals" }
+      );
+      
+      // Technology
+      allProducts.push(
+        { id: productId++, name: "Noise-Cancelling Headphones", trait: "sensory", productType: "technology" },
+        { id: productId++, name: "Focus Timer Device", trait: "organizational", productType: "technology" },
+        { id: productId++, name: "Sensory-Friendly Keyboard", trait: "sensory", productType: "technology" },
+        { id: productId++, name: "Smart Lighting System", trait: "sensory", productType: "technology" },
+        { id: productId++, name: "Digital Task Organizer", trait: "organizational", productType: "technology" },
+        { id: productId++, name: "White Noise Machine", trait: "regulation", productType: "technology" },
+        { id: productId++, name: "Electronic Stim Device", trait: "stimming", productType: "technology" },
+        { id: productId++, name: "Vibrating Reminder Watch", trait: "organizational", productType: "technology" },
+        { id: productId++, name: "Light Therapy Lamp", trait: "regulation", productType: "technology" }
+      );
+      
+      // Pagination variables
+      let currentPage = 1;
+      const productsPerPage = 20;
+      let visibleProducts = [];
+      let searchQuery = '';
+      
+      // DOM elements
+      const productsContainer = document.querySelector('.products');
+      const productCountElement = document.querySelector('.product-count');
+      const paginationElement = document.querySelector('.pagination');
+      const prevButton = document.querySelector('.prev-page');
+      const nextButton = document.querySelector('.next-page');
+      const currentPageElement = document.querySelector('.current-page');
+      const totalPagesElement = document.querySelector('.total-pages');
+      const searchInput = document.querySelector('.search-input');
+      
+      // Filtering variables
+      let selectedTrait = '';
+      let selectedProductTypes = [];
+      
+      // Display products based on current filters and pagination
+      function displayProducts() {
+        // Filter products
+        visibleProducts = allProducts.filter(product => {
+          const traitMatch = selectedTrait === '' || product.trait === selectedTrait;
+          const productTypeMatch = selectedProductTypes.length === 0 || 
+                                selectedProductTypes.includes(product.productType);
+          const searchMatch = searchQuery === '' || 
+                            product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            product.trait.toLowerCase().includes(searchQuery.toLowerCase());
+          
+          return traitMatch && productTypeMatch && searchMatch;
+        });
+        
+        // Calculate pagination
+        const totalPages = Math.ceil(visibleProducts.length / productsPerPage);
+        currentPageElement.textContent = currentPage;
+        totalPagesElement.textContent = totalPages;
+        
+        // Enable/disable pagination buttons
+        prevButton.classList.toggle('disabled', currentPage <= 1);
+        nextButton.classList.toggle('disabled', currentPage >= totalPages);
+        
+        // Get current page products
+        const startIndex = (currentPage - 1) * productsPerPage;
+        const endIndex = startIndex + productsPerPage;
+        const currentPageProducts = visibleProducts.slice(startIndex, endIndex);
+        
+        // Update product count message
+        if (visibleProducts.length > 0) {
+          productCountElement.textContent = `Showing ${startIndex + 1}-${Math.min(endIndex, visibleProducts.length)} of ${visibleProducts.length} products`;
+        } else {
+          productCountElement.textContent = 'No products match your filters';
+        }
+        
+        // Clear and rebuild products container
+        productsContainer.innerHTML = '';
+        
+        // Add products to DOM
+        currentPageProducts.forEach(product => {
+          const productDiv = document.createElement('div');
+          productDiv.className = 'product';
+          productDiv.dataset.trait = product.trait;
+          productDiv.dataset.product = product.productType;
+          
+          // Add image placeholder
+          const imagePlaceholder = document.createElement('div');
+          imagePlaceholder.className = 'product-image-placeholder';
+          imagePlaceholder.textContent = 'Product Image';
+          productDiv.appendChild(imagePlaceholder);
+          
+          // Add product name
+          const productName = document.createElement('div');
+          productName.textContent = product.name;
+          productDiv.appendChild(productName);
+          
+          productsContainer.appendChild(productDiv);
+        });
+        
+        // Show/hide pagination based on product count
+        paginationElement.style.display = totalPages > 1 ? 'flex' : 'none';
+      }
+      
+      // Handle search input
+      searchInput.addEventListener('input', () => {
+        searchQuery = searchInput.value.trim();
+        currentPage = 1; // Reset to first page when search changes
+        displayProducts();
+      });
+      
+      // Handle trait button clicks in dropdown
+      const traitButtons = document.querySelectorAll('.trait-dropdown-content button');
+      traitButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const trait = button.dataset.trait;
+          selectedTrait = trait; // Set selected trait (empty string for "All traits")
+          
+          // Update active state
+          traitButtons.forEach(btn => {
+            if (btn.dataset.trait === selectedTrait) {
+              btn.classList.add('active');
+            } else {
+              btn.classList.remove('active');
+            }
+          });
+          
+          // Update dropdown button text
+          const dropdownButton = document.querySelector('.trait-dropdown-button');
+          if (selectedTrait) {
+            dropdownButton.textContent = trait ? trait.charAt(0).toUpperCase() + trait.slice(1) : 'All traits';
+          } else {
+            dropdownButton.textContent = 'Shop by trait!';
+          }
+          
+          // Reset to first page when filters change
+          currentPage = 1;
+          displayProducts();
+        });
+      });
+
+      // Handle product type checkbox changes
+      const productTypeCheckboxes = document.querySelectorAll('.product-type-checkboxes input');
+      productTypeCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+          selectedProductTypes = Array.from(productTypeCheckboxes)
+            .filter(cb => cb.checked)
+            .map(cb => cb.dataset.product);
+          
+          // Reset to first page when filters change
+          currentPage = 1;
+          displayProducts();
+        });
+      });
+
+      // Toggle dropdown visibility
+      const dropdownButton = document.querySelector('.trait-dropdown-button');
+      const dropdownContent = document.getElementById('trait-dropdown');
+      
+      dropdownButton.addEventListener('click', () => {
+        dropdownContent.classList.toggle('show');
+      });
+      
+      // Close dropdown when clicking outside
+      window.addEventListener('click', (event) => {
+        if (!event.target.matches('.trait-dropdown-button')) {
+          if (dropdownContent.classList.contains('show')) {
+            dropdownContent.classList.remove('show');
+          }
+        }
+      });
+      
+      // Pagination event listeners
+      prevButton.addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage--;
+          displayProducts();
+          window.scrollTo(0, 0);
+        }
+      });
+      
+      nextButton.addEventListener('click', () => {
+        const totalPages = Math.ceil(visibleProducts.length / productsPerPage);
+        if (currentPage < totalPages) {
+          currentPage++;
+          displayProducts();
+          window.scrollTo(0, 0);
+        }
+      });
+      
+      // Initial display
+      displayProducts();
+    });
+  </script>
+</body>
+</html>
