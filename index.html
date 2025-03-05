@@ -408,6 +408,144 @@
       font-size: 14px;
       color: var(--mb-text);
     }
+    
+    /* Mobile styles */
+    .mobile-menu-button {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 10px;
+    }
+    
+    .sidebar-toggle {
+      display: none;
+      padding: 10px 20px;
+      background-color: var(--mb-accent);
+      color: white;
+      border: none;
+      font-family: var(--mb-body-font);
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      position: relative;
+    }
+    
+    .sidebar-toggle:after {
+      content: '+';
+      position: absolute;
+      right: 20px;
+      transition: transform 0.3s;
+    }
+    
+    .sidebar-toggle.active:after {
+      transform: rotate(45deg);
+    }
+    
+    /* Media queries for responsive design */
+    @media screen and (max-width: 768px) {
+      .site-header {
+        padding: 15px;
+      }
+      
+      .nav {
+        gap: 15px;
+      }
+      
+      .hero-content {
+        left: 20px;
+        max-width: 80%;
+      }
+      
+      .page {
+        grid-template-areas:
+          "sidebar"
+          "main";
+        grid-template-columns: 1fr;
+      }
+      
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--mb-light-gray);
+      }
+      
+      .products {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+    }
+    
+    @media screen and (max-width: 480px) {
+      .site-header {
+        flex-wrap: wrap;
+        padding: 10px;
+      }
+      
+      .logo {
+        order: 1;
+        margin: 0 auto;
+      }
+      
+      .mobile-menu-button {
+        display: block;
+        order: 0;
+      }
+      
+      .nav {
+        display: none;
+        width: 100%;
+        order: 3;
+        flex-direction: column;
+        gap: 0;
+        margin-top: 10px;
+      }
+      
+      .nav.active {
+        display: flex;
+      }
+      
+      .nav a {
+        padding: 10px 0;
+        border-bottom: 1px solid var(--mb-light-gray);
+      }
+      
+      .header-actions {
+        order: 2;
+      }
+      
+      .hero-content {
+        bottom: 20px;
+        left: 15px;
+        padding: 15px;
+        max-width: 85%;
+      }
+      
+      .sidebar-toggle {
+        display: block;
+      }
+      
+      .sidebar-section:not(:first-child) {
+        display: none;
+      }
+      
+      .sidebar-section.active {
+        display: block;
+      }
+      
+      .products {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 10px;
+        padding: 10px;
+      }
+      
+      .product {
+        padding: 10px;
+      }
+      
+      .product-image-placeholder {
+        height: 130px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -416,6 +554,8 @@
   </div>
   
   <div class="site-header">
+    <button class="mobile-menu-button" aria-label="Toggle navigation menu">☰</button>
+    
     <div class="nav">
       <a href="#">Our Perspective</a>
       <a href="#">Articles</a>
@@ -444,6 +584,8 @@
 
   <div class="page">
     <div class="sidebar">
+      <button class="sidebar-toggle">Filter Products</button>
+      
       <div class="sidebar-section">
         <div class="sidebar-title">Search Products</div>
         <div class="search-container">
@@ -912,6 +1054,68 @@
       
       // Initial display
       displayProducts();
+      
+      // Mobile menu toggle
+      const mobileMenuButton = document.querySelector('.mobile-menu-button');
+      const navMenu = document.querySelector('.nav');
+      
+      if (mobileMenuButton) {
+        mobileMenuButton.addEventListener('click', () => {
+          navMenu.classList.toggle('active');
+        });
+      }
+      
+      // Sidebar toggle for mobile
+      const sidebarToggle = document.querySelector('.sidebar-toggle');
+      const sidebarSections = document.querySelectorAll('.sidebar-section');
+      
+      if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', () => {
+          sidebarToggle.classList.toggle('active');
+          sidebarSections.forEach(section => {
+            section.classList.toggle('active');
+          });
+        });
+      }
+      
+      // Handle touch events for mobile
+      if ('ontouchstart' in window) {
+        // Make sure dropdown closes on touch outside on mobile
+        document.addEventListener('touchstart', (event) => {
+          if (!event.target.matches('.trait-dropdown-button') && 
+              !event.target.closest('.trait-dropdown-content')) {
+            if (dropdownContent.classList.contains('show')) {
+              dropdownContent.classList.remove('show');
+            }
+          }
+        });
+        
+        // Make pagination buttons more touch-friendly
+        if (prevButton && nextButton) {
+          prevButton.addEventListener('touchstart', (e) => {
+            if (!prevButton.classList.contains('disabled')) {
+              e.preventDefault();
+              if (currentPage > 1) {
+                currentPage--;
+                displayProducts();
+                window.scrollTo(0, 0);
+              }
+            }
+          });
+          
+          nextButton.addEventListener('touchstart', (e) => {
+            if (!nextButton.classList.contains('disabled')) {
+              e.preventDefault();
+              const totalPages = Math.ceil(visibleProducts.length / productsPerPage);
+              if (currentPage < totalPages) {
+                currentPage++;
+                displayProducts();
+                window.scrollTo(0, 0);
+              }
+            }
+          });
+        }
+      }
     });
   </script>
 </body>
